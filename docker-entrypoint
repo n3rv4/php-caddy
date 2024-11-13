@@ -1,0 +1,6 @@
+#!/bin/sh
+
+chown -R www-data:www-data /app
+sudo -u www-data /app/_startup_config/initApp.sh
+
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
