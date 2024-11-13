@@ -62,7 +62,7 @@ COPY ./config/php.ini /etc/php83/conf.d/custom.ini
 COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN mkdir /.config /.local /app/_startup_config
+RUN mkdir /.config /.local /app/_startup_config /app/_startup_config/supervisord
 RUN chown -R nobody.nobody /app /run /.config /.local
 
 COPY ./init_app.sh 	/app/_startup_config/
