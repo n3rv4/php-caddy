@@ -54,18 +54,19 @@ RUN apk add --no-cache \
 # Create symlink so programs depending on `php` still function
 RUN ln -sf /usr/bin/php83 /usr/bin/php
 
+# Make sure files/folders needed by the processes are accessable when they run under the nobody user
+RUN mkdir /.config /.config/supervisord /.config/startup
+
 # Configure PHP-FPM
 COPY ./config/fpm-pool.conf /etc/php83/php-fpm.d/www.conf
 COPY ./config/php.ini /etc/php83/conf.d/custom.ini
 
 # Configure supervisord
-COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./config/supervisord.conf /.config/supervisord.conf
 
-# Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN mkdir /.config /.local /app/_startup_config /app/_startup_config/supervisord
-
-COPY ./init_app.sh 	/app/_startup_config/
-RUN chmod a+x /app/_startup_config/*.sh
+# Configure application
+COPY ./init_app.sh 	/.config/startup
+RUN chmod a+x /.config/startup/*.sh
 
 # Expose the port nginx is reachable on
 EXPOSE 80 443
@@ -77,7 +78,7 @@ ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 
 # Switch to use a non-root user from here on
 #USER nobody
-RUN chown -R nobody.nobody /app /run /.config /.local /var/log
+RUN chown -R nobody.nobody /app /run /.config /var/log
 
 # Configure a healthcheck to validate that everything is up&running
 HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1/fpm-ping
