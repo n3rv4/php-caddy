@@ -1,12 +1,3 @@
-FROM python:alpine as python
-
-WORKDIR /app
-
-COPY ./requirements.txt .
-
-RUN pip3 install -r requirements.txt
-
-
 # Install Caddy
 FROM docker.io/caddy:builder-alpine AS caddy-builder
 
@@ -18,7 +9,10 @@ RUN xcaddy build
 # Install PHP
 FROM docker.io/alpine
 
-RUN apk add --no-cache bash
+RUN apk upgrade && apk add --no-cache  \
+    bash \
+    py3-openpyxl \
+    ;
 
 # Setup document root
 WORKDIR /app
