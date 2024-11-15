@@ -1,3 +1,12 @@
+FROM python:alpine
+
+WORKDIR /app
+
+COPY ./requirements.txt .
+
+RUN pip3 install -r requirements.txt
+
+
 # Install Caddy
 FROM docker.io/caddy:builder-alpine AS caddy-builder
 ENV GO111MODULE=on \
