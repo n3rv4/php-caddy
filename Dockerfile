@@ -7,6 +7,9 @@ RUN xcaddy build
 
 # Install PHP
 FROM docker.io/alpine
+
+RUN apk add --no-cache bash
+
 # Setup document root
 WORKDIR /app
 
@@ -27,7 +30,6 @@ RUN apk add --no-cache \
   php83-intl \
   php83-sodium \
   php83-mbstring \
-  php83-mysqli \
   php83-opcache \
   php83-openssl \
   php83-phar \
@@ -41,7 +43,6 @@ RUN apk add --no-cache \
   php83-zip \
   php83-pdo \
   php83-pdo_mysql \
-  php83-pdo_pgsql \
   php83-exif \
   php83-xmlwriter \
   php83-simplexml \
