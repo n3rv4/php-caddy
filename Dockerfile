@@ -1,4 +1,4 @@
-FROM python:alpine
+FROM python:alpine as python
 
 WORKDIR /app
 
@@ -9,6 +9,7 @@ RUN pip3 install -r requirements.txt
 
 # Install Caddy
 FROM docker.io/caddy:builder-alpine AS caddy-builder
+
 ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn,direct
 RUN xcaddy build
@@ -21,6 +22,8 @@ RUN apk add --no-cache bash
 
 # Setup document root
 WORKDIR /app
+
+COPY --from=python /app /app
 
 RUN apk add mariadb-client
 
