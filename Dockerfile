@@ -7,59 +7,44 @@ RUN xcaddy build
 
 
 # Install PHP
-FROM docker.io/alpine
+FROM php:8.3-fpm-alpine
+
+ARG APP_ENV=dev
 
 RUN apk upgrade && apk add --no-cache  \
     bash \
     py3-openpyxl \
+    mariadb-client \
+    supervisor \
+    unzip \
+    p7zip \
     ;
 
 # Setup document root
 WORKDIR /app
 
-COPY --from=python /app /app
-
-RUN apk add mariadb-client
-
 # Get caddy
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
-# Install packages and remove default server definition
-RUN apk add --no-cache \
-  curl \
-  php83 \
-  php83-ctype \
-  php83-curl \
-  php83-dom \
-  php83-fpm \
-  php83-gd \
-  php83-intl \
-  php83-sodium \
-  php83-mbstring \
-  php83-opcache \
-  php83-openssl \
-  php83-phar \
-  php83-session \
-  php83-xml \
-  php83-xmlreader \
-  php83-zlib \
-  php83-redis \
-  php83-tokenizer \
-  php83-fileinfo \
-  php83-zip \
-  php83-pdo \
-  php83-pdo_mysql \
-  php83-exif \
-  php83-xmlwriter \
-  php83-simplexml \
-  php83-sysvsem \
-  php83-iconv \
-  php83-bcmath \
-  supervisor \
-  icu-data-full
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Create symlink so programs depending on `php` still function
-RUN ln -sf /usr/bin/php83 /usr/bin/php
+RUN install-php-extensions \
+    gd \
+    intl \
+    zip \
+    xsl \
+    opcache \
+    ldap \
+    mbstring \
+    pcntl \
+    pdo_mysql \
+    redis \
+    sysvsem \
+    @composer \
+    ;
+
+RUN if [ "$APP_ENV" = "dev" ] ; then install-php-extensions xdebug ; fi
+
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
 RUN mkdir /.config /.config/supervisord /.config/startup
@@ -75,7 +60,7 @@ COPY ./config/supervisord.conf /.config/supervisord.conf
 COPY ./init_app.sh 	/.config/startup
 RUN chmod a+x /.config/startup/*.sh
 
-# Expose the port nginx is reachable on
+# Expose the port caddy is reachable on
 EXPOSE 80 443
 
 # Let supervisord start caddy & php-fpm
@@ -84,8 +69,4 @@ RUN chmod +x /usr/local/bin/docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 
 # Switch to use a non-root user from here on
-#USER nobody
 RUN chown -R nobody.nobody /app /run /.config /var/log
-
-# Configure a healthcheck to validate that everything is up&running
-HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1/fpm-ping
