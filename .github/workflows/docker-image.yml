@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_TOKEN }}
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag n3rv4/php-caddy
+      run: docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile --tag n3rv4/php-caddy .
 
     - name: Push the new Docker image
       run: docker push n3rv4/php-caddy
