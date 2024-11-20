@@ -50,7 +50,7 @@ RUN if [ "$APP_ENV" = "dev" ] ; then install-php-extensions xdebug ; fi
 RUN mkdir /.config /.config/supervisord /.config/startup
 
 # Configure PHP-FPM
-COPY ./config/fpm-pool.conf /etc/php83/php-fpm.d/www.conf
+#COPY ./config/fpm-pool.conf /etc/php83/php-fpm.d/www.conf
 COPY ./config/php.ini /etc/php83/conf.d/custom.ini
 
 # Configure supervisord
@@ -69,4 +69,4 @@ RUN chmod +x /usr/local/bin/docker-entrypoint
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 
 # Switch to use a non-root user from here on
-RUN chown -R nobody.nobody /app /run /.config /var/log
+RUN chown -R www-data.www-data /app /run /.config /var/log
