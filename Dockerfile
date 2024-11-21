@@ -7,7 +7,7 @@ RUN xcaddy build
 
 FROM php:8.3-fpm-alpine
 
-ARG APP_ENV=dev
+#ARG APP_ENV=dev
 
 # Installer supervisord et les dépendances nécessaires
 RUN apk update && \
@@ -41,7 +41,7 @@ RUN install-php-extensions \
     @composer \
     ;
 
-RUN if [ "$APP_ENV" = "dev" ] ; then install-php-extensions xdebug ; fi
+#RUN if [ "$APP_ENV" = "dev" ] ; then install-php-extensions xdebug ; fi
 
 # Créer les répertoires nécessaires
 RUN mkdir -p /etc/supervisor/conf.d /etc/caddy /.config /.config/supervisord /.config/caddy /.config/startup /run/php
