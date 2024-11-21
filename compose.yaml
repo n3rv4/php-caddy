@@ -1,0 +1,8 @@
+services:
+  www:
+    image: test
+    volumes:
+      - ./test/Caddyfile:/etc/caddy/Caddyfile
+      - ./test/public:/app/public
+    # comment the following line in production, it allows to have nice human-readable logs in dev
+    tty: true

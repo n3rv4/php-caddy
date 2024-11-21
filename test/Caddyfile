@@ -1,0 +1,34 @@
+{
+	# This file is only used for dev and benchmarking.
+	# Please see /etc/Caddyfile in the container, for the one that is actual used in this demo
+	debug
+}
+
+:443 {
+	log
+
+    route {
+        root * /app/public/
+
+        # Add trailing slash for directory requests
+        @canonicalPath {
+            file {path}/index.php
+            not path */
+        }
+        redir @canonicalPath {path}/ 308
+
+        # If the requested file does not exist, try index files
+        @indexFiles file {
+            try_files {path} {path}/index.php index.php
+            split_path .php
+        }
+        rewrite @indexFiles {http.matchers.file.relative}
+
+        # PHP-FPM!
+        php_fastcgi unix//run/php-fpm.sock {
+            trusted_proxies private_ranges
+        }
+        #encode zstd gzip
+        file_server
+    }
+}
