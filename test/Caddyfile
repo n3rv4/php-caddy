@@ -1,10 +1,8 @@
 {
-	# This file is only used for dev and benchmarking.
-	# Please see /etc/Caddyfile in the container, for the one that is actual used in this demo
 	debug
 }
 
-:443 {
+extranet.smart.bt.local {
 	log
 
     route {
@@ -25,10 +23,9 @@
         rewrite @indexFiles {http.matchers.file.relative}
 
         # PHP-FPM!
-        php_fastcgi unix//run/php-fpm.sock {
-            trusted_proxies private_ranges
-        }
-        #encode zstd gzip
+        php_fastcgi 127.0.0.1:9000
+
+        encode zstd gzip
         file_server
     }
 }
