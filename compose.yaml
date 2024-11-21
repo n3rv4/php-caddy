@@ -1,6 +1,10 @@
 services:
   www:
-    image: test
+    image: n3rv4/php-caddy
+    container_name: www
+    ports:
+      - "443:443"
+      - "80:80"
     volumes:
       - ./test/Caddyfile:/etc/caddy/Caddyfile
       - ./test/public:/app/public
