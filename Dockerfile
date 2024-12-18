@@ -44,12 +44,15 @@ RUN install-php-extensions \
 #RUN if [ "$APP_ENV" = "dev" ] ; then install-php-extensions xdebug ; fi
 
 # Créer les répertoires nécessaires
-RUN mkdir -p /etc/supervisor/conf.d /etc/caddy /.config /.config/supervisord /.config/caddy /.config/startup /run/php
+RUN mkdir -p /etc/supervisor/conf.d /etc/caddy /.config /.config/php /.config/supervisord /.config/caddy /.config/startup /run/php
 
 # Copier les fichiers de configuration
 COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./config/php.ini /usr/local/etc/php/conf.d/custom.ini
+
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-COPY ./config/php.ini /etc/php83/conf.d/custom.ini
+RUN cp /.config/php/custom.ini "$PHP_INI_DIR/custom.ini"
+
 
 # Exposer le port 80
 EXPOSE 80 443
@@ -64,6 +67,8 @@ RUN chmod a+x /.config/startup/*.sh
 
 # Switch to use a non-root user from here on
 RUN chown -R www-data.www-data /app /run /.config /var/log /run/php
+
+RUN export SUPERVISOR_CONFIG=/etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/.config/startup/startup.sh"]
 
