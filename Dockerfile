@@ -49,10 +49,7 @@ RUN mkdir -p /etc/supervisor/conf.d /etc/caddy /.config /.config/php /.config/su
 # Copier les fichiers de configuration
 COPY ./config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY ./config/php.ini /usr/local/etc/php/conf.d/custom.ini
-
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-RUN cp /.config/php/custom.ini "$PHP_INI_DIR/custom.ini"
-
 
 # Exposer le port 80
 EXPOSE 80 443
