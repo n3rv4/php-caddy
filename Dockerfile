@@ -65,7 +65,7 @@ RUN chmod a+x /.config/startup/*.sh
 # Switch to use a non-root user from here on
 RUN chown -R www-data:www-data /app /run /.config /var/log /run
 
-RUN export SUPERVISOR_CONFIG=/etc/supervisor/conf.d/supervisord.conf
+#RUN export SUPERVISOR_CONFIG=/etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/.config/startup/startup.sh"]
 
