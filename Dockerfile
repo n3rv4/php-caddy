@@ -19,7 +19,9 @@ RUN apk update && \
           mariadb-client \
           unzip \
           p7zip \
-    ;
+          wget \
+          ca-certificates \
+        && update-ca-certificates;
 
 # Installer Caddy
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
