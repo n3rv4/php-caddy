@@ -28,6 +28,7 @@ COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
+ENV INSTALL_PHP_EXTENSIONS_DEBUG=1
 RUN install-php-extensions \
     gd \
     intl \
