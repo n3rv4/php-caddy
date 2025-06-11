@@ -37,6 +37,7 @@ RUN install-php-extensions \
     opcache \
     ldap \
     mbstring \
+    mysqlnd \
     pcntl \
     pdo_mysql \
     redis \
