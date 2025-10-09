@@ -5,7 +5,7 @@ ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn,direct
 RUN xcaddy build
 
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 #ARG APP_ENV=dev
 
@@ -52,6 +52,7 @@ RUN mkdir -p /etc/caddy /.config /.config/php /.config/supervisord /.config/cadd
 
 # Copier les fichiers de configuration
 COPY ./config/supervisord.conf /etc/supervisord.conf
+COPY ./config/fpm-pool.conf /usr/local/etc/php-fpm.d/zzz.conf
 COPY ./config/php.ini /usr/local/etc/php/conf.d/custom.ini
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
