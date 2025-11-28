@@ -31,7 +31,7 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         #platforms: linux/amd64
-        #provenance: true
-        #sbom: true
+        provenance: true
+        sbom: true
         push: true
         tags: n3rv4/php-caddy
