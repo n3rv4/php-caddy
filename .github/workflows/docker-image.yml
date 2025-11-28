@@ -40,7 +40,7 @@ jobs:
           provenance: true
           sbom: true
           tags: |
-            n3rv4/php-caddy:latest
+            n3rv4/php-caddy:8.3
             n3rv4/php-caddy:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=local,src=/tmp/.buildx-cache
