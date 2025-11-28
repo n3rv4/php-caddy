@@ -37,6 +37,8 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          provenance: true
+          sbom: true
           tags: |
             n3rv4/php-caddy:8.4
             n3rv4/php-caddy:${{ github.sha }}
