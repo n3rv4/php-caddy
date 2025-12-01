@@ -5,7 +5,7 @@ ENV GO111MODULE=on \
     GOPROXY=https://goproxy.cn,direct
 RUN xcaddy build
 
-FROM php:8.3-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 #ARG APP_ENV=dev
 
