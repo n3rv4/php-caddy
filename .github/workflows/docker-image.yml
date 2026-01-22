@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "8.4" ]
+    branches: [ "8.5" ]
   pull_request:
-    branches: [ "8.4" ]
+    branches: [ "8.5" ]
 
 jobs:
   build:
@@ -40,7 +40,7 @@ jobs:
           provenance: true
           sbom: true
           tags: |
-            n3rv4/php-caddy:8.4
+            n3rv4/php-caddy:8.5
             n3rv4/php-caddy:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=local,src=/tmp/.buildx-cache
