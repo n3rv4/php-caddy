@@ -1,31 +1,30 @@
-# Caddy (Docker Hardened Image)
-FROM dhi.io/caddy:2.10.2 AS caddy
+# Install Caddy
+FROM docker.io/caddy:builder-alpine AS caddy-builder
 
-# PHP (Docker Hardened Image)
-#
-# Note: using a `-dev` tag to keep a package manager available during build
-# (supervisor + various OS packages + php-extension installer dependencies).
-FROM dhi.io/php:8.5.2-debian13-dev
+ENV GO111MODULE=on \
+    GOPROXY=https://goproxy.cn,direct
+RUN xcaddy build
+
+FROM php:8.5-fpm-alpine
 
 #ARG APP_ENV=dev
 
-# Install supervisord and required OS dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-          supervisor \
-          curl \
+# Installer supervisord et les dépendances nécessaires
+RUN apk update && \
+    apk add --no-cache  \
+          supervisor  \
+          curl  \
           bash \
-          python3-openpyxl \
+          py3-openpyxl \
           mariadb-client \
           unzip \
-          p7zip-full \
+          p7zip \
           wget \
           ca-certificates \
-        && update-ca-certificates && \
-        rm -rf /var/lib/apt/lists/*
+        && update-ca-certificates;
 
-# Install Caddy
-COPY --from=caddy /usr/bin/caddy /usr/bin/caddy
+# Installer Caddy
+COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
@@ -55,7 +54,7 @@ RUN mkdir -p /etc/caddy /.config /.config/php /.config/supervisord /.config/cadd
 COPY ./config/supervisord.conf /etc/supervisord.conf
 COPY ./config/fpm-pool.conf /usr/local/etc/php-fpm.d/zzz.conf
 COPY ./config/php.ini /usr/local/etc/php/conf.d/custom.ini
-RUN if [ -f "$PHP_INI_DIR/php.ini-production" ]; then mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; fi
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Exposer le port 80
 EXPOSE 80 443
@@ -67,11 +66,6 @@ WORKDIR /app
 COPY ./init_app.sh 	/.config/startup
 COPY ./startup.sh /.config/startup
 RUN chmod a+x /.config/startup/*.sh
-
-# Ensure `www-data` exists (supervisord config runs Caddy as `www-data`)
-RUN if ! getent passwd www-data >/dev/null; then \
-      groupadd -g 82 www-data && useradd -u 82 -g 82 -M -s /usr/sbin/nologin www-data; \
-    fi
 
 # Switch to use a non-root user from here on
 RUN chown -R www-data:www-data /app /run /.config /var/log /run
