@@ -48,7 +48,8 @@ RUN install-php-extensions \
 #RUN if [ "$APP_ENV" = "dev" ] ; then install-php-extensions xdebug ; fi
 
 # Créer les répertoires nécessaires
-RUN mkdir -p /etc/caddy /.config /.config/php /.config/supervisord /.config/caddy /.config/startup /run/php
+RUN mkdir -p /etc/caddy /.config /.config/php /.config/supervisord /.config/caddy /.config/startup /run/php \
+             /.config/caddy/.local/share/caddy
 
 # Copier les fichiers de configuration
 COPY ./config/supervisord.conf /etc/supervisord.conf
