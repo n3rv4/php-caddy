@@ -30,6 +30,7 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 
 ENV INSTALL_PHP_EXTENSIONS_DEBUG=1
 RUN install-php-extensions \
+    apcu \
     gd \
     intl \
     zip \
@@ -37,9 +38,11 @@ RUN install-php-extensions \
     opcache \
     ldap \
     mbstring \
+    mongodb \
     mysqlnd \
     pcntl \
     pdo_mysql \
+    pdo_pgsql \
     redis \
     sysvsem \
     @composer \
