@@ -2,7 +2,7 @@
 FROM docker.io/caddy:builder-alpine AS caddy-builder
 
 ENV GO111MODULE=on \
-    GOPROXY=https://goproxy.cn,direct
+    GOPROXY=https://proxy.golang.org,direct
 RUN xcaddy build
 
 FROM php:8.5-fpm-alpine
