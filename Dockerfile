@@ -9,6 +9,11 @@ FROM php:8.5-fpm-alpine
 
 #ARG APP_ENV=dev
 
+# Mettre à jour les paquets hérités de l'image de base (openssl, curl, expat, util-linux...)
+# `apk add` seul ne met pas à jour un paquet déjà installé : sans `apk upgrade`,
+# ces paquets restent figés à la version du build de php:8.5-fpm-alpine.
+RUN apk upgrade --no-cache
+
 # Installer supervisord et les dépendances nécessaires
 RUN apk update && \
     apk add --no-cache  \

@@ -5,6 +5,11 @@ on:
     branches: [ "8.5" ]
   pull_request:
     branches: [ "8.5" ]
+  # Rebuild hebdomadaire : sans lui, l'image publiée reste figée sur les
+  # versions de paquets du jour du dernier commit et accumule les CVE.
+  schedule:
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -31,6 +36,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Cache Docker layers
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
@@ -50,5 +56,9 @@ jobs:
             n3rv4/php-caddy:8.5
             n3rv4/php-caddy:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          # Sur un rebuild programmé ou manuel, on repart de zéro : réutiliser le
+          # cache resservirait la couche `apk upgrade` et annulerait tout l'intérêt.
+          no-cache: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+          pull: true
+          cache-from: ${{ (github.event_name == 'push' || github.event_name == 'pull_request') && 'type=local,src=/tmp/.buildx-cache' || '' }}
+          cache-to: ${{ (github.event_name == 'push' || github.event_name == 'pull_request') && 'type=local,dest=/tmp/.buildx-cache' || '' }}
